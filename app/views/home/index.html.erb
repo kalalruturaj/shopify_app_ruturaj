@@ -1,0 +1,719 @@
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({ title: "Home" });
+    });
+  </script>
+<% end %>
+<style type="text/css">
+  
+  table, tr, th, td {
+    text-align: center;
+    /*border-color: transparent;*/
+   border-bottom:1px;
+   border-bottom-style: solid;
+    line-height: 250%;
+ 
+}
+
+table, td{
+  border-bottom-color: gray;
+}
+.table-css{
+    background-color: white;
+    margin: 50px;
+    padding: 20px;
+    border-radius: 10px;
+
+}
+
+
+table, th{
+  text-align: center;
+    border-collapse: collapse;
+    font-family: Arial;
+}
+
+.circle_red {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: red;
+    margin: auto;
+    /*border-radius: transperant; */
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_green {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: green;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_yellow {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: yellow;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_blue {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: blue;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+
+ 
+
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s;
+}
+
+/* Fade in tabs */
+@-webkit-keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+
+.dataTables_filter input { width: 50px }
+.width35{width: 350px}
+
+
+</style>
+<body>
+
+<center> <h1 style="font-family: Arial;">TBG - Dashboard </h1></center>
+
+ 
+<div class="tab">
+   <button class="tablinks" onclick="openCity(event, 'All')">All</button>
+  
+  <button class="tablinks" onclick="openCity(event, 'Unfulfilled')">Unfulfilled</button>
+  <button class="tablinks" onclick="openCity(event, 'Unpaid')">Unpaid</button>
+  <button class="tablinks" onclick="openCity(event, 'Archived')">Archived</button>
+  <button class="tablinks" onclick="openCity(event, 'Unarchived')">Unarchived</button>
+
+</div>
+
+
+<div id="All" class="tabcontent">
+  
+ 
+  
+  <div class="table-css ">
+  
+  
+   
+<table id="table_allorders" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+       
+      <th>Customer </th>
+      <th>Postal </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @orders.each do |o| %>
+
+    <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+      
+
+      <td style="text-align: left;">
+         <% unless o.shipping_address.nil? %>
+          <% unless o.shipping_address.first_name.nil? %>
+          <% s = o.shipping_address.first_name %>
+         <%sf =  s.concat(" ") %>
+         <%=  sf.concat(o.shipping_address.last_name) %>
+         <% end %>
+         <% end %>
+        </td>
+       <td>
+        <% unless o.shipping_address.nil? %>
+        
+        <% unless o.shipping_address.zip.nil? %>
+        <%=  o.shipping_address.zip %>
+        <% end %>
+        <% end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td style="text-align: right;">$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+        <div style="display: none;"><%= o.fulfillment_status %></div> 
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+       <div style="display: none;"><%= o.tags %></div>
+
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+        <div style="display: none;"><%= o.financial_status %></div>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+        <div style="display: none;"><%= o.note %></div>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+          <%= link_to o.fulfillments[0].tracking_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> 
+          <% end %>
+         <% end %> 
+        </td>
+       </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</div>
+
+ <div id="Unfulfilled" class="tabcontent">
+  
+  
+  <div class="table-css ">
+  
+  
+   
+<table id="table_unfulfilledorders" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+      <th>Customer </th>
+      <th>Postal </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @unfulfilledorders.each do |o| %>
+
+    <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+      
+
+      <td style="text-align: left;">
+         <% unless o.shipping_address.nil? %>
+          <% unless o.shipping_address.first_name.nil? %>
+          <% s = o.shipping_address.first_name %>
+         <%sf =  s.concat(" ") %>
+         <%=  sf.concat(o.shipping_address.last_name) %>
+         <% end %>
+         <% end %>
+        </td>
+       <td>
+        <% unless o.shipping_address.nil? %>
+        
+        <% unless o.shipping_address.zip.nil? %>
+        <%=  o.shipping_address.zip %>
+        <% end %>
+        <% end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td style="text-align: right;">$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+        <div style="display: none;"><%= o.fulfillment_status %></div> 
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+       <div style="display: none;"><%= o.tags %></div>
+
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+        <div style="display: none;"><%= o.financial_status %></div>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+        <div style="display: none;"><%= o.note %></div>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+          <%= link_to o.fulfillments[0].tracking_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> 
+          <% end %>
+         <% end %> 
+        </td>
+       </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div id="Unpaid" class="tabcontent">
+  
+   
+  <div class="table-css ">
+     
+<table id="table_unpaidorders" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+      <th>Customer </th>
+      <th>Postal </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @unpaidorders.each do |o| %>
+  <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+
+
+      <td style="text-align: left;">
+         <% unless o.shipping_address.nil? %>
+          <% unless o.shipping_address.first_name.nil? %>
+          <% s = o.shipping_address.first_name %>
+         <%sf =  s.concat(" ") %>
+         <%=  sf.concat(o.shipping_address.last_name) %>
+         <% end %>
+         <% end %>
+        </td>
+       <td>
+        <% unless o.shipping_address.nil? %>
+        
+        <% unless o.shipping_address.zip.nil? %>
+        <%=  o.shipping_address.zip %>
+        <% end %>
+        <% end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td style="text-align: right;">$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+        <div style="display: none;"><%= o.fulfillment_status %></div> 
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+       <div style="display: none;"><%= o.tags %></div>
+
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+        <div style="display: none;"><%= o.financial_status %></div>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+        <div style="display: none;"><%= o.note %></div>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+          <%= link_to o.fulfillments[0].tracking_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> 
+          <% end %>
+         <% end %> 
+        </td>
+       </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div id="Archived" class="tabcontent">
+  
+   
+  <div class="table-css ">
+  
+  
+   
+<table id="table_archivedorders" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+      <th>Customer </th>
+      <th>Postal </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @archivedorders.each do |o| %>
+
+    <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+
+
+      <td style="text-align: left;">
+         <% unless o.shipping_address.nil? %>
+          <% unless o.shipping_address.first_name.nil? %>
+          <% s = o.shipping_address.first_name %>
+         <%sf =  s.concat(" ") %>
+         <%=  sf.concat(o.shipping_address.last_name) %>
+         <% end %>
+         <% end %>
+        </td>
+       <td>
+        <% unless o.shipping_address.nil? %>
+        
+        <% unless o.shipping_address.zip.nil? %>
+        <%=  o.shipping_address.zip %>
+        <% end %>
+        <% end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td style="text-align: right;">$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+        <div style="display: none;"><%= o.fulfillment_status %></div> 
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+       <div style="display: none;"><%= o.tags %></div>
+
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+        <div style="display: none;"><%= o.financial_status %></div>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+        <div style="display: none;"><%= o.note %></div>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+          <%= link_to o.fulfillments[0].tracking_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> 
+          <% end %>
+         <% end %> 
+        </td>
+       </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div id="Unarchived" class="tabcontent">
+ 
+   
+  <div class="table-css ">
+  
+  
+   
+<table id="table_unarchived" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+      <th>Customer </th>
+      <th>Postal </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @unarchivedorders.each do |o| %>
+
+    <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+
+
+      <td style="text-align: left;">
+         <% unless o.shipping_address.nil? %>
+          <% unless o.shipping_address.first_name.nil? %>
+          <% s = o.shipping_address.first_name %>
+         <%sf =  s.concat(" ") %>
+         <%=  sf.concat(o.shipping_address.last_name) %>
+         <% end %>
+         <% end %>
+        </td>
+       <td>
+        <% unless o.shipping_address.nil? %>
+        
+        <% unless o.shipping_address.zip.nil? %>
+        <%=  o.shipping_address.zip %>
+        <% end %>
+        <% end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td style="text-align: right;">$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+        <div style="display: none;"><%= o.fulfillment_status %></div> 
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+       <div style="display: none;"><%= o.tags %></div>
+
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+        <div style="display: none;"><%= o.financial_status %></div>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+        <div style="display: none;"><%= o.note %></div>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+          <%= link_to o.fulfillments[0].tracking_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> 
+          <% end %>
+         <% end %> 
+        </td>
+       </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</div>
+<script>
+  
+$(document).ready( function () {
+    $('#table_allorders').DataTable({
+      "lengthMenu":[[50,100,200,-1],[50,100,200, "All"]], "order":[[0,"desc"]]
+    });
+    $('input[type="search"]').addClass('width35');
+} );
+
+$(document).ready( function () {
+    $('#table_unarchived').DataTable({
+      "lengthMenu":[[50,100,200,-1],[50,100,200, "All"]], "order":[[0,"desc"]]
+    });
+    $('input[type="search"]').addClass('width35');
+} );
+
+
+$(document).ready( function () {
+    $('#table_archivedorders').DataTable({
+      "lengthMenu":[[50,100,200,-1],[50,100,200, "All"]], "order":[[0,"desc"]]
+    });
+    $('input[type="search"]').addClass('width35');
+} );
+
+
+$(document).ready( function () {
+    $('#table_unpaidorders').DataTable({
+      "lengthMenu":[[50,100,200,-1],[50,100,200, "All"]], "order":[[0,"desc"]]
+    });
+    $('input[type="search"]').addClass('width35');
+} );
+
+$(document).ready( function () {
+    $('#table_unfulfilledorders').DataTable({
+      "lengthMenu":[[50,100,200,-1],[50,100,200, "All"]], "order":[[0,"desc"]]
+    });
+    $('input[type="search"]').addClass('width35');
+} );
+
+
+
+</script>
+
+<script>
+function openCity(evt, cityName) {
+  
+
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    
+}
+</script>
+     
+
+ 
+
+</body>
